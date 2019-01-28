@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+
+@if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["MensagemErro"]
+    </div>
+}
+
+
+@if (TempData["LoginErro"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["LoginErro"]
+    </div>
+}
+
+@if (TempData["CadastreSeNotOK"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["CadastreSeNotOK"]
+    </div>
+}
+
+@if (TempData["CadastroOK"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["CadastroOK"]
+    </div>
+}
+
+<form class="col-md-6 offset-md-3" action="/RHOnline/Home/Login" method="post">
+
+    <div style="display:flex;justify-content:center; flex-direction:column; align-items:center">
+
+        <div class="form-group ">
+            <label for="cpf">CPF</label>
+            <input type="text" class="form-control cpf" name="cpf" id="cpf" placeholder="___.___.___-__" required>
+            @Html.ValidationMessage("cpf")
+        </div>
+
+        <div class="form-group">
+            <label for="senha">Senha</label>
+            <input type="password" class="form-control" name="senha" id="senha" placeholder="Insira sua Senha" required>
+            @Html.ValidationMessage("senha")
+        </div>
+
+        <br />
+
+        <div hidden>
+
+            <button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span class="sr-only">Entrando...</span>
+            </button>
+
+        </div>
+
+        <button type="submit" id="btnEnviar" class="btn btn-primary">Entrar</button>
+
+        <br />
+        <br />
+
+        <a class="btn btn-default" data-toggle="modal" data-target="#modalCadastreSe">Primeiro Acesso? Cadastre-se aqui</a>
+
+        <br />
+
+        <a class="btn btn-default" data-toggle="modal" data-target="#modalEsqueceuSenha">Esqueci minha senha</a>
+    </div>
+
+</form>
+
+
+<!--Modal Esqueci Minha Senha-->
+<div class="modal fade" id="modalEsqueceuSenha" tabindex="-1" role="dialog" aria-labelledby="modalEsqueceuSenhaTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalEsqueceuSenhaTitulo">Esqueci Minha Senha</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="\RHOnline\Home\EnviarLinkSenha">
+                    <div class="form-group col-md-auto">
+                        <label for="dias">Digite o seu Email: </label>
+                        <input type="email" name="email" class="form-control" id="email" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary" id="botaoenviar">Enviar</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!--Modal Cadastre-se-->
+<div class="modal fade" id="modalCadastreSe" tabindex="-1" role="dialog" aria-labelledby="modalmodalCadastreSeTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalmodalCadastreSeTitulo">Cadastre-se</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="\RHOnline\Home\ValidarCadastro">
+                    <div class="form-group col-md-auto">
+                        <label for="cpf">Digite o seu CPF: </label>
+                        <input type="text" name="cpf" class="form-control" id="cpf" placeholder="___.___.___-__" required>
+                    </div>
+
+                    <div class="form-group col-md-auto">
+                        <label for="codigo">Digite o seu Código: </label>
+                        <input type="text" name="codigo" class="form-control" id="codigo" required>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary" id="botaoenviar">Enviar</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript" language="javascript">
+
+    //$('.cpf').mask('000.000.000-00', { reverse: true }, { placeholder: '___.___.___-__'});
+
+    //$('#cpf').mask('000.000.000-00');
+    
+</script>
+
+
+
+
+
+
+
