@@ -27,7 +27,7 @@
 
         <div class="form-group ">
             <label for="cpf">CPF</label>
-            <input type="text" class="form-control cpf" name="cpf" id="cpf" placeholder="___.___.___-__" required>
+            <input type="text" class="form-control cpf" onkeyup="mascara(this, mcpf);" name="cpf" id="cpf" placeholder="___.___.___-__" required>
             @Html.ValidationMessage("cpf")
         </div>
 
@@ -39,16 +39,16 @@
 
         <br />
 
-        <div hidden>
-
-            <button class="btn btn-primary" type="button" disabled>
+        <div id="spinner" style="display:none">
+            <button type="submit" class="btn btn-primary">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                <span class="sr-only">Entrando...</span>
+                Entrando...
             </button>
 
         </div>
 
-        <button type="submit" id="btnEnviar" class="btn btn-primary">Entrar</button>
+
+        <button type="submit" id="btnEnviar" class="btn btn-primary" onclick="return mostrarSpinner();">Entrar</button>
 
         <br />
         <br />
@@ -58,6 +58,7 @@
         <br />
 
         <a class="btn btn-default" data-toggle="modal" data-target="#modalEsqueceuSenha">Esqueci minha senha</a>
+
     </div>
 
 </form>
@@ -77,12 +78,20 @@
                 <form method="post" action="\RHOnline\Home\EnviarLinkSenha">
                     <div class="form-group col-md-auto">
                         <label for="cpf">Digite o seu CPF: </label>
-                        <input type="text" name="cpf" class="form-control" id="cpf" placeholder="___.___.___-__" required>
+                        <input type="text" name="cpf" class="form-control" id="cpf" onkeyup="mascara(this, mcpf);" placeholder="___.___.___-__" required>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-primary" id="botaoenviar">Enviar</button>
+
+                        <div id="spinnerSenha" style="display:none">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Enviando...
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" onclick="return mostrarSpinnerSenha();" id="botaoEnviarLinkSenha">Enviar</button>
                     </div>
                 </form>
             </div>
@@ -101,10 +110,11 @@
                 </button>
             </div>
             <div class="modal-body">
+
                 <form method="post" action="\RHOnline\Home\ValidarCadastro">
                     <div class="form-group col-md-auto">
                         <label for="cpf">Digite o seu CPF: </label>
-                        <input type="text" name="cpf" class="form-control" id="cpf" placeholder="___.___.___-__" required>
+                        <input type="text" name="cpf" class="form-control" id="cpf" onkeyup="mascara(this, mcpf);" placeholder="___.___.___-__" required>
                     </div>
 
                     <div class="form-group col-md-auto">
@@ -129,9 +139,25 @@
 
 <script type="text/javascript" language="javascript">
 
-                //$('.cpf').mask('000.000.000-00', { reverse: true }, { placeholder: '___.___.___-__'});
+    function mostrarSpinner() {
+        $('#spinner').css('display', 'initial');
+        $('#btnEnviar').hide();
+    }
 
-                //$('#cpf').mask('000.000.000-00');
+    function mostrarSpinnerSenha() {
+        $('#spinnerSenha').css('display', 'initial');
+        $('#botaoEnviarLinkSenha').hide();
+    }
+    
+
+    document.getElementById("senha")
+        .addEventListener("keyup", function (event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                $('#spinner').css('display', 'initial');
+                $('#btnEnviar').hide();
+            }
+        });
 
 </script>
 

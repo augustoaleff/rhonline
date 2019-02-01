@@ -52,7 +52,7 @@
 
         <div class="form-group col-md-8">
             <label for="email">E-mail: </label>
-            <input type="email" name="email" value="@ViewBag.User.Email" class="form-control" />
+            <input type="email" id="email" name="email" value="@ViewBag.User.Email" class="form-control" />
         </div>
 
     </div>
@@ -61,12 +61,12 @@
 
         <div class="form-group col-md-4">
             <label for="telefone">Telefone: </label>
-            <input type="tel" name="telefone" value="@ViewBag.User.Telefone" placeholder="(__) ____-____" class="form-control" />
+            <input type="tel" id="telefone" name="telefone" value="@ViewBag.User.Telefone" onkeyup="mascara(this, mtel);" title="Digite somente números" placeholder="(__) ____-____" class="form-control" />
         </div>
 
         <div class="form-group col-md-4">
             <label for="celular">Celular: </label>
-            <input type="tel" name="celular" value="@ViewBag.User.Celular" placeholder="(__) _____-____" class="form-control" />
+            <input type="tel" id="celular" name="celular" value="@ViewBag.User.Celular" onkeyup="mascara(this, mtel);" title="Digite somente números" placeholder="(__) _____-____" class="form-control" />
         </div>
 
     </div>
@@ -75,16 +75,15 @@
 
         <div class="form-group col-md-6">
             <label for="senha">Senha: </label>
-            <input type="password" name="senha" class="form-control" value="@ViewBag.User.Senha" aria-describedby="requisitosSenha" required />
+            <input type="password" id="senha" name="senha" class="form-control" value="@ViewBag.User.Senha" aria-describedby="requisitosSenha" required />
             <small id="requisitosSenha" class="form-text text-muted">
                 A senha deve conter entre 8 e 20 caracteres, contendo letra maiúscula, minúscula e números.
             </small>
-
         </div>
 
         <div class="form-group col-md-6">
             <label for="confirmasenha">Confirme sua Senha: </label>
-            <input type="password" name="confirmasenha" value="" class="form-control" required />
+            <input type="password" id="confirmasenha" name="confirmasenha" value="" class="form-control" required />
         </div>
 
         @if (TempData["SenhaNaoValidada"] != null)
@@ -100,12 +99,59 @@
 
     <div class="form-group">
 
-        <button type="submit" class="btn btn-primary">Enviar</button>
+        <div id="spinnerSenha" style="display:none">
+            <button type="submit" class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Enviando...
+            </button>
+        </div>
+
+        <button type="submit" id="btnEnviar" onkeyup="return mostrarSpinner();" class="btn btn-primary">Enviar</button>
         <button type="reset" class="btn btn-secondary">Limpar Tela</button>
 
     </div>
 
 </form>
+
+<script type="text/javascript">
+    
+    function validaCampos() {
+
+        if ($('#email').attr('value') != "" && $('#email').attr('value') != null) {
+
+            if ($('#telefone').attr('value') != "" && $('#telefone').attr('value') != null) {
+                
+                if ($('#celular').attr('value') != "" && $('#telefone').attr('value') != null) {
+                    
+                    if ($('#senha').attr('value') != "" && $('#telefone').attr('value') != null) {
+
+                        if ($('#confirmasenha').attr('value') != "" && $('#confirmasenha').attr('value') != null) {
+
+                            return true;
+                            
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+    
+    function mostrarSpinner() {
+
+        if (validaCampos) {
+
+            $('#spinner').css('display', 'initial');
+            $('#btnEnviar').hide();
+
+        }
+
+
+    }
+
+</script>
 
 
 

@@ -51,5 +51,45 @@ namespace RHOnline.Models.Logs
             this.Obs = "ERRO: " + e.Message;
         }
 
+        public void EsqueciMinhaSenha_Envio(int usuario, string codigo)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 6; //Enviado link de redefinição de senha com sucesso
+            this.Obs = "Código de Validação: " + codigo;
+        }
+
+        public void EsqueciMinhaSenha_Envio_Erro(int usuario, string codigo, Exception exp)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 5; //Enviado link de redefinição de senha com erro
+            this.Obs = "ERRO: " + exp.Message + " / Código de Validação: " + codigo;
+        }
+
+        public void EsqueciMinhaSenha_Troca(int usuario)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 8; //Redefinição de senha por link com sucesso
+        }
+
+        public void EsqueciMinhaSenha_Troca_Erro(int usuario, Exception exp)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 7; //Redefinição de senha por link com erro
+            this.Obs = "ERRO: " + exp.Message;
+        }
+
+        public void AlterarMinhaSenha(int usuario)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 10; //Alteração de senha pelo usuário com sucesso
+        }
+
+        public void AlterarMinhaSenha_Erro(int usuario, Exception exp)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 9; //Alteração de senha pelo usuário com erro
+            this.Obs = "ERRO: " + exp.Message;
+        }
+
     }
 }

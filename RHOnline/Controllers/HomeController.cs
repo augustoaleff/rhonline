@@ -61,7 +61,6 @@ namespace RHOnline.Controllers
 
                         try
                         {
-
                             int loja = _db.Int_RH_Usuarios.Where(a => a.Id == user.Id).Select(s => s.Loja.Id).FirstOrDefault();
                             user.Loja = _db.Int_DP_Lojas.Find(loja);
 
@@ -90,7 +89,7 @@ namespace RHOnline.Controllers
                             string mensagem = exp.Message;
 
                             TempData["MensagemErroIndex"] = "Ocorreu um erro ao tentar efetuar o login";
-
+                            
                             log.LogIn_Erro(user.Id, exp);
 
                             return RedirectToAction("Index");
@@ -149,9 +148,11 @@ namespace RHOnline.Controllers
 
                         user_cad.DataCadastro = Globalization.HoraAtualBR();
                         user_cad.Email = user.Email;
-                        user_cad.Celular = user.Celular;
-                        user_cad.Telefone = user.Telefone;
-                        user_cad.Nivel = 2;
+                        user_cad.Celular =
+                            user.Celular.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("/", "").Replace("\\", "").Trim();
+                        user_cad.Telefone = 
+                            user.Telefone.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("/", "").Replace("\\", "").Trim();
+                        user_cad.Nivel = 2; //Usuário Comum
                         user_cad.Senha = Criptografia.GetMd5Hash(user.Senha);
                         user_cad.Cadastrado = 1;
                         user_cad.Ativo = 1;
@@ -178,7 +179,6 @@ namespace RHOnline.Controllers
 
         public bool ValidarSenha(string senha)
         {
-
             if (senha.Length >= 8)
             {
                 if (senha.Length <= 20)
@@ -295,42 +295,43 @@ namespace RHOnline.Controllers
             ViewBag.Email = email;
             ViewBag.IdSenha = id;
             ViewBag.CPF = cpf;
-
+            
+            
             cpf = cpf.Replace(".", "").Replace(",", "").Replace("-", "").Replace("/", "").Replace("\\", "").Trim();
 
             Usuario vUsuario = _db.Int_RH_Usuarios.Find(id);
 
             if (cpf == vUsuario.CPF)
             {
-
                 if (senha == confirmasenha)
                 {
                     //Log log = new Log();
 
                     if (ValidarSenha(senha))
                     {
-
+                        Log log = new Log();
+                        
                         try
                         {
                             vUsuario.Senha = Criptografia.GetMd5Hash(senha);
 
                             _db.SaveChanges();
 
-                            //log.EsqueciMinhaSenha_Troca(vUsuario.Id);
+                            log.EsqueciMinhaSenha_Troca(vUsuario.Id);
 
                             TempData["MensagemSucessoIndex"] = "Senha Alterada com sucesso";
                             return RedirectToAction("Index");
                         }
                         catch (Exception exp)
                         {
-                            //log.EsqueciMinhaSenha_Troca_Erro(id_notnull, exp);
+                            log.EsqueciMinhaSenha_Troca_Erro(id_notnull, exp);
 
                             TempData["TrocaSenhaNotOK"] = "Ocorreu um Erro ao tentar redefinir a senha, por favor, tente novamente mais tarde!";
                             return View();
                         }
                         finally
                         {
-                            //.Int_DP_Logs.Add(log);
+                            _db.Int_RH_Logs.Add(log);
                             _db.SaveChanges();
                         }
 
@@ -381,6 +382,8 @@ namespace RHOnline.Controllers
                     _db.Int_DP_ValidSenhas.Add(valid);
                     _db.SaveChanges();
 
+                    Log log = new Log();
+
                     try
                     {
                         string nome = Shared.PegarPrimeiroNome(user.Nome);
@@ -388,6 +391,8 @@ namespace RHOnline.Controllers
                         Library.Mail.EnviarLinkSenha.EnviarLinkTrocarSenha(user.Email, codigo, nome);
 
                         //log.EsqueciMinhaSenha_Envio(vEmail.Id, codigo);
+
+                        log.EsqueciMinhaSenha_Envio(user.Id, codigo);
 
                         TempData["MensagemSucessoIndex"] = "Um link foi enviado ao seu e-mail com instruções para trocar a senha";
 
@@ -400,12 +405,14 @@ namespace RHOnline.Controllers
 
                         TempData["MensagemErroIndex"] = "Ocorreu um erro ao tentar enviar o link, por favor tente novamente";
 
+                        log.EsqueciMinhaSenha_Envio_Erro(user.Id, codigo, exp);
+
                         return RedirectToAction("Index");
 
                     }
                     finally
                     {
-                        //_db.Int_DP_Logs.Add(log);
+                        _db.Int_RH_Logs.Add(log);
                         _db.SaveChanges();
                     }
 
@@ -450,8 +457,8 @@ namespace RHOnline.Controllers
                     {
 
                         ViewBag.User = user;
-
                         return View("Cadastrar");
+
                     }
                     else
                     {
