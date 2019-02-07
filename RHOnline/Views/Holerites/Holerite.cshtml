@@ -1,6 +1,7 @@
 ﻿
 @{
     Layout = "";
+    @using RHOnline.Library.Globalization;
 }
 
 <!DOCTYPE html>
@@ -87,29 +88,29 @@
                 <td class="descricao">1</td>
                 <td>SALÁRIO</td>
                 <td class="descricao">30,00</td>
-                <td class="descricao">1000,00</td>
-                <td class="descricao"></td>
+                <td class="descricao vencimento">1000,00</td>
+                <td class="descricao desconto"></td>
             </tr>
             <tr>
                 <td class="descricao">194</td>
                 <td>HORAS EXTRAS 60%</td>
                 <td class="descricao">5,05</td>
-                <td class="descricao">50,00</td>
-                <td class="descricao"></td>
+                <td class="descricao vencimento">50,00</td>
+                <td class="descricao desconto"></td>
             </tr>
             <tr>
                 <td class="descricao">11</td>
                 <td>INSS SOBRE SALARIO</td>
                 <td class="descricao">9,00</td>
-                <td class="descricao"></td>
-                <td class="descricao">500,00</td>
+                <td class="descricao vencimento"></td>
+                <td class="descricao desconto">500,00</td>
             </tr>
             <tr>
                 <td class="descricao">1061</td>
                 <td>DESC COMPRA(S) MERCADORIA(S)</td>
                 <td class="descricao"></td>
-                <td class="descricao"></td>
-                <td class="descricao">200,00</td>
+                <td class="descricao vencimento" ></td>
+                <td class="descricao desconto">200,00</td>
             </tr>
 
         </table>
@@ -120,9 +121,7 @@
 
             <div class="mensagem">
                 ATUALIZE OS SEUS DOCUMENTOS JUNTO AO RH, NÃO ESQUEÇA DE TRAZER O COMPROVANDE DE RESIDÊNCIA, RG E FOTO ATUALIZADA!
-
             </div>
-
 
             <table class="rodape-table">
                 <tr>
@@ -163,10 +162,35 @@
                 </tr>
             </table>
 
-
         </div>
     </div>
 
+    <div class="validacao">
+
+        <br />
+
+        Holerite emitido digitalmente @Globalization.DataAtualExtensoBR(), poderá ser validado <br /> pelo site htttp://wwww.eletroleste.com.br/RHOnline/Validacao/Validar com o código:  <br /> AAA000BBB125CCC
+
+        <br />
+        <br />
+
+    </div>
+
+    <script type="text/javascript">
+
+        var Soma = document.getElementsByClassName("vencimento");
+        var somatoria;
+        
+        $(Soma).each(evento){
+
+            somatoria = somatoria + parseFloat(event);
+            
+        };
+        
+    </script>
 
 </body>
+
 </html>
+
+

@@ -94,19 +94,18 @@
         }
 
         <br />
-
     </div>
 
     <div class="form-group">
 
-        <div id="spinnerSenha" style="display:none">
+        <div id="spinner" style="display:none">
             <button type="submit" class="btn btn-primary">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 Enviando...
             </button>
         </div>
 
-        <button type="submit" id="btnEnviar" onkeyup="return mostrarSpinner();" class="btn btn-primary">Enviar</button>
+        <button type="submit" id="btnEnviar" onclick="return mostrarSpinner();" class="btn btn-primary">Enviar</button>
         <button type="reset" class="btn btn-secondary">Limpar Tela</button>
 
     </div>
@@ -116,39 +115,45 @@
 <script type="text/javascript">
     
     function validaCampos() {
-
-        if ($('#email').attr('value') != "" && $('#email').attr('value') != null) {
-
-            if ($('#telefone').attr('value') != "" && $('#telefone').attr('value') != null) {
+        
+        var email = document.getElementById("email").value;
+        var telefone = document.getElementById("telefone").value;
+        var celular = document.getElementById("celular").value;
+        var senha = document.getElementById("senha").value;
+        var confirmasenha = document.getElementById("confirmasenha").value;
+        
+        if (email != "" && email != null) {
+            
+            if (telefone != "" && telefone != null) {
                 
-                if ($('#celular').attr('value') != "" && $('#telefone').attr('value') != null) {
+                if (celular != "" && celular != null) {
                     
-                    if ($('#senha').attr('value') != "" && $('#telefone').attr('value') != null) {
-
-                        if ($('#confirmasenha').attr('value') != "" && $('#confirmasenha').attr('value') != null) {
-
+                    if (senha != "" && senha != null) {
+                        
+                        if (confirmasenha != "" && confirmasenha != null) {
+                            
                             return true;
                             
                         }
-                        
                     }
                 }
             }
         }
 
         return false;
+
     }
     
     function mostrarSpinner() {
 
-        if (validaCampos) {
+        var validacao = validaCampos();
+        
+        if (validacao) {
 
             $('#spinner').css('display', 'initial');
             $('#btnEnviar').hide();
 
         }
-
-
     }
 
 </script>

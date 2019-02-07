@@ -40,7 +40,7 @@ namespace RHOnline.Controllers
         [HttpPost]
         public ActionResult Login(string cpf, string senha)
         {
-            cpf = cpf.Replace(".", "").Replace("-", "").Replace(",", "").Replace("/", "").Replace("\\", "").Trim().ToLower();
+            cpf = Shared.RetirarCaracteres(cpf);
 
             Usuario user = _db.Int_RH_Usuarios.Where(a => a.CPF.Equals(cpf)).FirstOrDefault();
 
@@ -68,6 +68,7 @@ namespace RHOnline.Controllers
                             user.Setor = _db.Int_DP_Setores.Find(setor);
 
                             HttpContext.Session.SetInt32("ID", user.Id);
+                            HttpContext.Session.SetString("Nome", user.Nome);
                             HttpContext.Session.SetString("CPF", user.CPF);
                             HttpContext.Session.SetInt32("Nivel", user.Nivel);
                             HttpContext.Session.SetInt32("Loja", user.Loja.Id);
@@ -89,7 +90,7 @@ namespace RHOnline.Controllers
                             string mensagem = exp.Message;
 
                             TempData["MensagemErroIndex"] = "Ocorreu um erro ao tentar efetuar o login";
-                            
+
                             log.LogIn_Erro(user.Id, exp);
 
                             return RedirectToAction("Index");
@@ -148,10 +149,9 @@ namespace RHOnline.Controllers
 
                         user_cad.DataCadastro = Globalization.HoraAtualBR();
                         user_cad.Email = user.Email;
-                        user_cad.Celular =
-                            user.Celular.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("/", "").Replace("\\", "").Trim();
-                        user_cad.Telefone = 
-                            user.Telefone.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Replace("/", "").Replace("\\", "").Trim();
+                        user_cad.Celular = Shared.RetirarCaracteres(user.Celular);
+                        user_cad.Telefone = Shared.RetirarCaracteres(user.Telefone);
+                        
                         user_cad.Nivel = 2; //Usuário Comum
                         user_cad.Senha = Criptografia.GetMd5Hash(user.Senha);
                         user_cad.Cadastrado = 1;
@@ -257,6 +257,8 @@ namespace RHOnline.Controllers
                         ViewBag.Nome = usuario.Nome;
                         ViewBag.Email = usuario.Email;
                         ViewBag.IdSenha = usuario.Id;
+                        
+
 
                         ViewBag.TrocarSenha = vKey;
 
@@ -282,6 +284,78 @@ namespace RHOnline.Controllers
 
             }
         }
+        
+        [Login]
+        public ActionResult AlterarMinhaSenha()
+        {
+
+            int id_notnull = HttpContext.Session.GetInt32("ID") ?? 0;
+
+            Usuario usuario = _db.Int_RH_Usuarios.Find(id_notnull);
+            
+            return View();
+        }
+
+        [Login]
+        [HttpPost]
+        public ActionResult AlterarMinhaSenha([FromForm]int? id, string senha, string confirmasenha, string senhaAnterior)
+        {
+
+            ViewBag.Senha = senha;
+            ViewBag.SenhaAnterior = senhaAnterior;
+            
+            int id_notnull = id ?? 0;
+
+            Usuario usuario = _db.Int_RH_Usuarios.Find(id_notnull);
+
+            if (senha == confirmasenha)
+            {
+                if (ValidarSenha(senha))
+                {
+                    if (Criptografia.VerifyMd5Hash(senhaAnterior, usuario.Senha))
+                    {
+                        Log log = new Log();
+
+                        try
+                        {
+                            usuario.Senha = Criptografia.GetMd5Hash(senha);
+                            _db.SaveChanges();
+
+                            log.AlterarMinhaSenha(id_notnull);
+                            TempData["AlterarMinhaSenhaOK"] = "Senha alterada com sucesso!";
+                            ViewBag.Senha = "";
+
+                            return RedirectToAction("Inicio");
+
+                        }
+                        catch (Exception exp)
+                        {
+                            log.AlterarMinhaSenha_Erro(id_notnull, exp);
+                            TempData["AlterarMinhaSenhaNotOK"] = "Ocorreu um Erro ao tentar alterar a senha, por favor, tente novamente mais tarde!";
+                        }
+                        finally
+                        {
+                            _db.Int_RH_Logs.Add(log);
+                            _db.SaveChanges();
+                        }
+
+                    }
+                    else
+                    {
+                        TempData["SenhaAnteriorNotOK"] = "Senha Anterior Incorreta!";
+                    }
+                }
+            }
+            else
+            {
+                TempData["SenhaNaoValidada"] = "Senhas não conferem!";
+            }
+
+            return View();
+
+        }
+
+
 
 
         //Trocar Senha por envio e link no email
@@ -294,10 +368,9 @@ namespace RHOnline.Controllers
             ViewBag.Nome = nome;
             ViewBag.Email = email;
             ViewBag.IdSenha = id;
-            ViewBag.CPF = cpf;
+            ViewBag.CPF = string.Format("{0:###.###.###-##}", cpf); 
             
-            
-            cpf = cpf.Replace(".", "").Replace(",", "").Replace("-", "").Replace("/", "").Replace("\\", "").Trim();
+            cpf = Shared.RetirarCaracteres(cpf);
 
             Usuario vUsuario = _db.Int_RH_Usuarios.Find(id);
 
@@ -310,7 +383,7 @@ namespace RHOnline.Controllers
                     if (ValidarSenha(senha))
                     {
                         Log log = new Log();
-                        
+
                         try
                         {
                             vUsuario.Senha = Criptografia.GetMd5Hash(senha);
@@ -359,7 +432,8 @@ namespace RHOnline.Controllers
             string codigo;
             DateTime agora = Globalization.HoraAtualBR();
 
-            cpf = cpf.Replace(".", "").Replace("-", "").Replace(",", "").Replace("/", "").Replace("\\", "").Trim();
+            
+            cpf = Shared.RetirarCaracteres(cpf);
 
             Usuario user = _db.Int_RH_Usuarios.Where(a => a.CPF.Equals(cpf)).FirstOrDefault();
 
@@ -368,7 +442,7 @@ namespace RHOnline.Controllers
                 if (user.Email != null && user.Email != "")
                 {
                     codigo = "99" + user.Id.ToString() + agora.Minute.ToString() + agora.Month.ToString() + agora.Day.ToString() +
-                         agora.Year.ToString().Substring(2,2) + user.CPF.Substring(3, 3) + agora.Hour.ToString();
+                         agora.Year.ToString().Substring(2, 2) + user.CPF.Substring(3, 3) + agora.Hour.ToString();
 
                     ValidacaoSenha valid = new ValidacaoSenha
                     {
@@ -416,30 +490,79 @@ namespace RHOnline.Controllers
                         _db.SaveChanges();
                     }
 
-
                 }
                 else
                 {
                     TempData["MensagemErroIndex"] = "Não há e-mail cadastrado para esse CPF, entre em contato com o TI!";
                 }
-
             }
             else
             {
                 TempData["MensagemErroIndex"] = "CPF não encontrado!";
             }
 
-            
             return RedirectToAction("Index");
         }
 
+        [Login]
+        public ActionResult AtualizarCadastro()
+        {
+            int id = HttpContext.Session.GetInt32("ID") ?? 0;
+
+            Usuario user = _db.Int_RH_Usuarios.Find(id);
+
+            ViewBag.User = user;
+
+            return View();
+        }
+
+
+        [Login]
+        [HttpPost]
+        public ActionResult AtualizarCadastro(int? id, string email, string telefone, string celular)
+        {
+            int id_notnull = id ?? 0;
+
+            Usuario usuario = _db.Int_RH_Usuarios.Find(id_notnull);
+
+            ViewBag.User = usuario;
+
+            telefone = Shared.RetirarCaracteres(telefone);
+
+            celular = Shared.RetirarCaracteres(celular);
+
+            email = email.ToLower();
+
+            try
+            {
+                usuario.Telefone = telefone;
+                usuario.Celular = celular;
+                usuario.Email = email;
+
+                _db.SaveChanges();
+
+                TempData["MensagemSucessoInicio"] = "Cadastro atualizado com sucesso!";
+
+                return RedirectToAction("Inicio");
+
+            }
+            catch (Exception)
+            {
+
+                TempData["AtualizarCadastroNotOk"] = "Ocorreu um erro ao tentar atualizar o cadastro";
+
+                return View();
+
+            }
+            
+        }
+        
         [HttpPost]
         public ActionResult ValidarCadastro(string cpf, int? codigo)
         {
-
             int code = codigo ?? 0;
-
-            cpf = cpf.Replace(",", "").Replace(".", "").Replace("-", "").Replace("/", "").Replace("\\", "");
+            
+            cpf = Shared.RetirarCaracteres(cpf);
 
             Usuario user = _db.Int_RH_Usuarios.Where(a => a.CPF.Equals(cpf)).FirstOrDefault();
 
@@ -455,10 +578,8 @@ namespace RHOnline.Controllers
                 {
                     if (user.CodigoAtivacao == code && code != 0)
                     {
-
                         ViewBag.User = user;
                         return View("Cadastrar");
-
                     }
                     else
                     {
@@ -491,9 +612,9 @@ namespace RHOnline.Controllers
             {
                 HttpContext.Session.Clear();
                 log.LogOut(user_notnull);
-                    
+
             }
-            catch(Exception exp)
+            catch (Exception exp)
             {
                 log.LogOut_Erro(user_notnull, exp);
             }
@@ -501,10 +622,9 @@ namespace RHOnline.Controllers
             {
                 _db.Int_RH_Logs.Add(log);
                 _db.SaveChanges();
-
             }
 
-            
+
             return RedirectToAction("Index");
         }
     }

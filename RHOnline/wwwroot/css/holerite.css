@@ -21,7 +21,6 @@ th {
     text-align: center;
 }
 
-
 .cabecalho-topo {
     display: flex;
     justify-content: space-between;
@@ -72,7 +71,6 @@ table.rodape-table{
     border-color: black;
     border-width: thin;
     border-bottom: none;
-    
 }
 
 .mensagem{
@@ -84,6 +82,18 @@ table.rodape-table{
     border: solid;
     border-color: black;
     border-width: thin;
+}
+
+.validacao{
+    border: solid;
+    border-color: black;
+    border-width: thin;
+    border-top: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-weight: 900;
 }
 
 tr:hover {

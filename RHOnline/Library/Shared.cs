@@ -30,5 +30,45 @@ namespace RHOnline.Library
 
         }
 
+        public static string RetirarCaracteres(string input)
+        {
+
+            string output;
+
+            input = input.Replace(".","");
+            input = input.Replace(",", "");
+            input = input.Replace("-", "");
+            input = input.Replace("/", "");
+            input = input.Replace("\\", "");
+            input = input.Replace("|", "");
+            input = input.Replace("@", "");
+            input = input.Replace(" ", "");
+            input = input.Replace("*", "");
+            input = input.Replace("(", "");
+            input = input.Replace(")", "");
+            input = input.Replace("_", "");
+            input = input.Replace("[", "");
+            input = input.Replace("]", "");
+            input = input.Replace(";", "");
+            input = input.Replace(":", "");
+            input = input.Replace("#", "");
+            input = input.Replace("=", "");
+            input = input.Replace("'", "");
+            input = input.Replace("\"", "");
+            input = input.Replace("~", "");
+            input = input.Replace("^", "");
+            input = input.Replace("%", "");
+            input = input.Replace("$", "");
+            input = input.Replace("!", "");
+            input = input.Replace("¨", "");
+            input = input.Replace("&", "");
+            input = input.Replace("+", "");
+
+            output = input.Trim();
+            
+            return output;
+        }
+
+
     }
 }

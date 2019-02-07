@@ -4,6 +4,11 @@ body {
     padding-top: 0px;
     padding-bottom: 0px;
 }
+/*
+.jumbotron {
+    background: url(../images/background.jpg) fixed center no-repeat;
+    background-size: cover;
+}*/
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
@@ -34,4 +39,10 @@ body {
     .carousel-caption {
         display: none;
     }
+}
+
+
+.destaque{
+    color: red;
+    font-weight: 900;
 }

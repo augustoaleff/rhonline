@@ -1,0 +1,147 @@
+﻿@using Microsoft.AspNetCore.Http;
+
+@{
+    ViewData["Title"] = "Alterar Minha Senha";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    int id_login = Context.Session.GetInt32("ID") ?? 0;
+    string nome_login = Context.Session.GetString("Nome");
+    ulong cpf_long = ulong.Parse(Context.Session.GetString("CPF"));
+
+    string cpf_login = cpf_long.ToString(@"000\.000\.000\-00");
+
+
+
+    string senha, senhaAnterior;
+
+    if (ViewBag.Senha != null)
+    {
+        senha = ViewBag.Senha;
+    }
+    else
+    {
+        senha = "";
+    }
+
+    if (ViewBag.SenhaAnterior != null)
+    {
+        senhaAnterior = ViewBag.SenhaAnterior;
+    }
+    else
+    {
+        senhaAnterior = "";
+    }
+}
+
+@if (TempData["AlterarMinhaSenhaNotOK"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["AlterarMinhaSenhaNotOK"]
+    </div>
+}
+
+@if (TempData["AlterarMinhaSenhaOK"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["AlterarMinhaSenhaOK"]
+    </div>
+}
+
+<h2>Alterar Minha Senha</h2>
+<br />
+
+<br />
+
+<form method="post" action="/RHOnline/Home/AlterarMinhaSenha" style="width:50%">
+
+    <input type="hidden" name="id" value="@id_login" />
+
+    <div class="form-row">
+
+
+        <!--Nome-->
+        <div class="form-group col-md-7">
+            <label for="nome">Nome</label>
+            <input type="text" class="form-control" value="@nome_login" disabled />
+        </div>
+
+        <!--CPF-->
+        <div class="form-group col-md-5">
+            <label for="setor">CPF</label>
+            <input type="text" class="form-control" value="@cpf_login" id="cpf_login" disabled />
+        </div>
+    </div>
+
+    <div class="form-row">
+
+        <!--Senha Anterior-->
+        <div class="form-group col-md-6">
+            <label for="senhaAnterior">Senha Anterior</label>
+            <input type="password" name="senhaAnterior" class="form-control" id="senhaAnterior" 
+                   onkeydown="return document.getElementById('conferencia_senhaanterior').hidden = true"
+                   value="@senhaAnterior" placeholder="" required>
+        </div>
+
+        @if (@TempData["SenhaAnteriorNotOK"] != null)
+        {
+            <div>
+                <b id="conferencia_senhaanterior" style="color:red">@TempData["SenhaAnteriorNotOK"]  </b>
+            </div>
+
+            <br />
+        }
+
+    </div>
+
+
+    <div class="form-row">
+
+        <!--Senha-->
+        <div class="form-group col-md-6">
+            <label for="senha">Senha</label>
+            <input type="password" name="senha" class="form-control" id="senha" value="@ViewBag.Senha" placeholder="" required>
+            <small id="requisitosSenha" class="form-text text-muted">
+                A senha deve conter entre 8 e 20 caracteres, contendo letra maiúscula, minúscula e números.
+            </small>
+        </div>
+
+        <!--Confirmar Senha-->
+        <div class="form-group col-md-6">
+            <label for="confirmasenha">Confime a Senha</label>
+            <input type="password" name="confirmasenha" class="form-control" id="confirmasenha" value="" onkeydown="return document.getElementById('conferencia').hidden = true; " required>
+        </div>
+
+        @if (TempData["SenhaNaoValidada"] != null)
+        {
+            <div>
+                <font color="red"><b>@TempData["SenhaNaoValidada"]</b></font>
+            </div>
+        }
+
+        <br />
+
+    </div>
+
+    <div class="form-group">
+
+        <button type="submit" class="btn btn-primary" id="botaoenviar">Enviar</button>
+        <button type="reset" class="btn btn-primary" id="botaoenviar">Limpar Tela</button>
+
+    </div>
+
+</form>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        
+        var cpf = $('#cpf_login').attr('value');
+
+        var mask = mascara(cpf, mcpf);
+        
+        $('#cpf_login').attr('value', mask);
+
+    });
+    
+</script>

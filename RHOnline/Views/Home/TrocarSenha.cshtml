@@ -14,7 +14,6 @@
     </div>
 }
 
-
 <br />
 <form method="post" action="/RHOnline/Home/TrocarSenha" style="width:50%">
 
@@ -27,7 +26,6 @@
             <label for="nome">Nome</label>
             <input type="text" class="form-control" value="@ViewBag.Nome" disabled />
             <input type="hidden" name="nome" id="nome" value="@ViewBag.Nome" />
-
         </div>
 
     </div>
@@ -62,6 +60,7 @@
     </div>
 
     <div class="form-row">
+
         <!--Senha-->
 
         <div class="form-group col-md-6">
@@ -72,11 +71,11 @@
             </small>
         </div>
 
-
         <!--Confirmar Senha-->
         <div class="form-group col-md-6">
             <label for="confirmasenha">Confime a Senha</label>
-            <input type="password" name="confirmasenha" class="form-control" id="confirmasenha" value="" onkeydown="return document.getElementById('conferencia').hidden = true; " required>
+            <input type="password" name="confirmasenha" class="form-control" id="confirmasenha" value=""
+                   onkeydown="return document.getElementById('conferencia').hidden = true; " required>
         </div>
 
         @if (TempData["SenhaNaoValidada"] != null)

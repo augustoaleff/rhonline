@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewData["Title"] = "Atualizar Cadastro";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ulong cpf_long = ulong.Parse(ViewBag.User.CPF);
+
+    string cpf = cpf_long.ToString(@"000\.000\.000\-00");
+
+    ulong tel_long = ulong.Parse(ViewBag.User.Telefone);
+
+    string tel = tel_long.ToString("(##) ####-####");
+
+    ulong cel_long = ulong.Parse(ViewBag.User.Celular);
+
+    string cel = cel_long.ToString("(##) #####-####");
+
+}
+
+@if (TempData["AtualizarCadastroNotOk"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["AtualizarCadastroNotOk"]
+    </div>
+}
+
+
+<h2>Atualizar Cadastro</h2>
+
+<br />
+
+<form action="/RHOnline/Home/AtualizarCadastro" method="post">
+
+    <input type="hidden" name="id" value="@ViewBag.User.Id" />
+
+    <div class="form-row">
+
+        <div class="form-group col-md-7">
+            <label for="nome">Nome: </label>
+            <input type="text" name="nome" id="nome" class="form-control" value="@ViewBag.User.Nome" disabled />
+        </div>
+
+        <div class="form-group col-md-5">
+            <label for="cpf">CPF: </label>
+            <input type="text" name="cpf" value="@cpf" class="form-control" disabled />
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="form-group col-md-8">
+            <label for="email">E-mail: </label>
+            <input type="email" id="email" name="email" value="@ViewBag.User.Email" class="form-control" required />
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="form-group col-md-4">
+            <label for="telefone">Telefone: </label>
+            <input type="tel" id="telefone" name="telefone" value="@tel" onkeyup="mascara(this, mtel);" title="Digite somente números" placeholder="(__) ____-____" class="form-control" required />
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="celular">Celular: </label>
+            <input type="tel" id="celular" name="celular" value="@cel" onkeyup="mascara(this, mtel);" title="Digite somente números" placeholder="(__) _____-____" class="form-control" required />
+        </div>
+
+    </div>
+
+    <div class="form-group">
+
+        <div id="spinnerSenha" style="display:none">
+            <button type="submit" class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Enviando...
+            </button>
+        </div>
+
+        <button type="submit" id="btnEnviar" onkeyup="return mostrarSpinner();" class="btn btn-primary">Enviar</button>
+        <button type="reset" class="btn btn-secondary">Limpar Tela</button>
+
+    </div>
+
+</form>
+
+<script type="text/javascript">
+
+    function mostrarSpinner() {
+
+        if (validaCampos) {
+
+            $('#spinner').css('display', 'initial');
+            $('#btnEnviar').hide();
+
+        }
+    }
+    
+</script>

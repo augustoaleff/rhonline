@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Http;
-@{ 
+@{
     string login = Context.Session.GetString("CPF");
 }
 
@@ -27,9 +27,9 @@
     </environment>
 
 
-
     <script src="jquery.js" type="text/javascript"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+
 </head>
 <body>
 
@@ -57,6 +57,7 @@
     *@
 
     <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #ffc760;">
+
         <div class="container">
             @*Logo*@
             <a class="navbar-brand" href="#">RH Online</a>
@@ -71,9 +72,9 @@
                     {
                         <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Inicio">Inicio </a></li>
                         <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="Holerites" asp-action="Holerite">Holerites</a></li>
-                        <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="" asp-action="">Informes de Rendimento</a></li>
-                        <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="" asp-action="">Atualizar Meus Dados</a></li>
-                        <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="" asp-action="">Alterar Minha Senha</a></li>
+                        <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="Holerites" asp-action="Holerite">Informes de Rendimento</a></li>
+                        <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="AtualizarCadastro">Atualizar Meus Dados</a></li>
+                        <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="AlterarMinhaSenha">Alterar Minha Senha</a></li>
                         <li class="nav-item active"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a></li>
                     }
                     else
@@ -86,56 +87,56 @@
         </div>
     </nav>
 
+        <div class="container body-content">
+            
+                @RenderBody()
+                <hr />
+                <footer style="display:flex;justify-content:space-between">
+                    <div>
+                        <p>&copy; @DateTime.Now.Year - RHOnline</p>
+                    </div>
+                    @if (Context.Session.GetString("UltimoAcesso") != null)
+                    {
+                        <div>
+                            <p><strong>Último Acesso:</strong> @Context.Session.GetString("UltimoAcesso")</p>
+                        </div>
+                    }
+                </footer>
 
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer style="display:flex;justify-content:space-between">
-            <div>
-                <p>&copy; @DateTime.Now.Year - RHOnline</p>
-            </div>
-            @if (Context.Session.GetString("UltimoAcesso") != null)
-            {
-                <div>
-                    <p><strong>Último Acesso:</strong> @Context.Session.GetString("UltimoAcesso")</p>
-                </div>
-            }
-        </footer>
-    </div>
-
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        @*<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-
-
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
-        </script>
-        @*
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-        *@
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-        
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
+        </div>
+    
+        <environment include="Development">
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            @*<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
 
-    @RenderSection("Scripts", required: false)
+            <script src="~/js/site.js" asp-append-version="true"></script>
+        </environment>
+        <environment exclude="Development">
+            <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery"
+                    crossorigin="anonymous"
+                    integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+            </script>
+            @*
+                <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                        asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                        asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                        crossorigin="anonymous"
+                        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+                </script>
+            *@
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+        </environment>
+
+        @RenderSection("Scripts", required: false)
 </body>
 </html>
