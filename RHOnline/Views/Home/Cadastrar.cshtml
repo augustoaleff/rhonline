@@ -10,7 +10,7 @@
         @TempData["CadastroNotOK"]
     </div>
 }
-    <br />
+<br />
 
 <h2>Cadastrar</h2>
 
@@ -34,7 +34,6 @@
     </div>
 
     <div class="form-row">
-
 
         <div class="form-group col-md-6">
             <label for="loja">Loja: </label>
@@ -87,9 +86,9 @@
         </div>
 
         @if (TempData["SenhaNaoValidada"] != null)
-        {
-            <div>
-                <font color="red"><b>@TempData["SenhaNaoValidada"]</b></font>
+        {            
+            <div class="destaque-vermelho">
+                @TempData["SenhaNaoValidada"]
             </div>
         }
 
@@ -113,27 +112,27 @@
 </form>
 
 <script type="text/javascript">
-    
+
     function validaCampos() {
-        
+
         var email = document.getElementById("email").value;
         var telefone = document.getElementById("telefone").value;
         var celular = document.getElementById("celular").value;
         var senha = document.getElementById("senha").value;
         var confirmasenha = document.getElementById("confirmasenha").value;
-        
+
         if (email != "" && email != null) {
-            
+
             if (telefone != "" && telefone != null) {
-                
+
                 if (celular != "" && celular != null) {
-                    
+
                     if (senha != "" && senha != null) {
-                        
+
                         if (confirmasenha != "" && confirmasenha != null) {
-                            
+
                             return true;
-                            
+
                         }
                     }
                 }
@@ -143,11 +142,11 @@
         return false;
 
     }
-    
+
     function mostrarSpinner() {
 
         var validacao = validaCampos();
-        
+
         if (validacao) {
 
             $('#spinner').css('display', 'initial');
@@ -157,6 +156,3 @@
     }
 
 </script>
-
-
-

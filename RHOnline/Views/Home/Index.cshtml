@@ -25,7 +25,7 @@
 
     <div style="display:flex;justify-content:center; flex-direction:column; align-items:center">
 
-        <div class="form-group ">
+        <div class="form-group">
             <label for="cpf">CPF</label>
             <input type="text" class="form-control cpf" onkeyup="mascara(this, mcpf);" name="cpf" id="cpf" placeholder="___.___.___-__" required>
             @Html.ValidationMessage("cpf")
@@ -38,7 +38,6 @@
         </div>
 
         <br />
-
         <br />
 
         <div id="spinner" style="display:none">
@@ -125,13 +124,9 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                         <button type="submit" class="btn btn-primary" id="botaoenviar">Enviar</button>
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
 
 </div>

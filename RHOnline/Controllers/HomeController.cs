@@ -27,10 +27,19 @@ namespace RHOnline.Controllers
 
         public IActionResult Index()
         {
-            return View();
+
+            //Verifica se já há alguma sessão ativa
+            if(HttpContext.Session.GetInt32("ID") != null)
+            {
+                return RedirectToAction("Inicio");
+            }
+            else
+            {
+                return View();
+            }
+            
         }
-
-
+        
         [Login]
         public IActionResult Inicio()
         {
@@ -80,8 +89,7 @@ namespace RHOnline.Controllers
                             _db.SaveChanges();
 
                             log.LogIn(user.Id);
-
-
+                            
                             return RedirectToAction("Inicio");
 
                         }
@@ -354,10 +362,7 @@ namespace RHOnline.Controllers
             return View();
 
         }
-
-
-
-
+        
         //Trocar Senha por envio e link no email
         [HttpPost]
         public ActionResult TrocarSenha([FromForm]int? id, string nome, string email, string cpf, string senha, string confirmasenha)
@@ -371,7 +376,7 @@ namespace RHOnline.Controllers
             ViewBag.CPF = string.Format("{0:###.###.###-##}", cpf); 
             
             cpf = Shared.RetirarCaracteres(cpf);
-
+            
             Usuario vUsuario = _db.Int_RH_Usuarios.Find(id);
 
             if (cpf == vUsuario.CPF)
@@ -400,6 +405,7 @@ namespace RHOnline.Controllers
                             log.EsqueciMinhaSenha_Troca_Erro(id_notnull, exp);
 
                             TempData["TrocaSenhaNotOK"] = "Ocorreu um Erro ao tentar redefinir a senha, por favor, tente novamente mais tarde!";
+                            
                             return View();
                         }
                         finally
@@ -407,7 +413,6 @@ namespace RHOnline.Controllers
                             _db.Int_RH_Logs.Add(log);
                             _db.SaveChanges();
                         }
-
                     }
                     else
                     {
@@ -427,11 +432,12 @@ namespace RHOnline.Controllers
             }
         }
 
+
         public ActionResult EnviarLinkSenha(string cpf)
         {
+
             string codigo;
             DateTime agora = Globalization.HoraAtualBR();
-
             
             cpf = Shared.RetirarCaracteres(cpf);
 
@@ -467,11 +473,10 @@ namespace RHOnline.Controllers
                         //log.EsqueciMinhaSenha_Envio(vEmail.Id, codigo);
 
                         log.EsqueciMinhaSenha_Envio(user.Id, codigo);
-
+                        
                         TempData["MensagemSucessoIndex"] = "Um link foi enviado ao seu e-mail com instruções para trocar a senha";
 
                         return RedirectToAction("Index");
-
                     }
                     catch (Exception exp)
                     {
@@ -482,7 +487,6 @@ namespace RHOnline.Controllers
                         log.EsqueciMinhaSenha_Envio_Erro(user.Id, codigo, exp);
 
                         return RedirectToAction("Index");
-
                     }
                     finally
                     {
@@ -515,8 +519,7 @@ namespace RHOnline.Controllers
 
             return View();
         }
-
-
+        
         [Login]
         [HttpPost]
         public ActionResult AtualizarCadastro(int? id, string email, string telefone, string celular)
@@ -553,8 +556,7 @@ namespace RHOnline.Controllers
 
                 return View();
 
-            }
-            
+            } 
         }
         
         [HttpPost]
@@ -595,8 +597,7 @@ namespace RHOnline.Controllers
             {
                 TempData["MensagemErroIndex"] = "CPF não encontrado!";
             }
-
-
+            
             return RedirectToAction("Index", "Home");
 
         }

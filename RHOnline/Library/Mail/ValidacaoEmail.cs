@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
 
 namespace RHOnline.Library.Mail
 {
-    public class EnviarLinkSenha
+    public class ValidacaoEmail
     {
-        public static void EnviarLinkTrocarSenha(string email, string codigo, string nome)
+
+        public static void EnviarEmailValidacao(string email, string codigo, string nome)
         {
             string saudacao, conteudo, rodape;
             DateTime agora = Globalization.Globalization.HoraAtualBR();
@@ -26,9 +27,9 @@ namespace RHOnline.Library.Mail
             {
                 saudacao = "Boa Noite " + nome + ",<br />";
             }
-
-            conteudo = "<br />  <a href='http://www.eletroleste.com.br/RHOnline/Home/TrocarSenha?key=" + codigo + "'>Clique Aqui </a> e siga as instuções para redefinir a sua senha: <br />" +
-                " <br /><br />Não foi você que solicitou a troca de senha? Entre em contato com o TI!";
+            
+            conteudo = "<br />  <a href='http://www.eletroleste.com.br/RHOnline/Home/TrocarSenha?key=" + codigo + "'>Clique Aqui </a> para confirmar o seu e-mail <br />" +
+                " <br /><br />Favor desconsiderar caso tenha recebido por erro";
 
             rodape = "<br /><br /><font size='1'>Mensagem Automática, favor não responder. Enviada: " + Globalization.Globalization.DataAtualExtensoBR() + "</font>";
 
@@ -42,7 +43,7 @@ namespace RHOnline.Library.Mail
             MailMessage mensagem = new MailMessage
             {
                 From = new MailAddress("no-reply@eletroleste.com.br", "RHOnline"),
-                Subject = "Redefinição de Senha",
+                Subject = "Confirmação de Email",
                 IsBodyHtml = true,
                 Body = saudacao +
                 conteudo +
@@ -50,6 +51,9 @@ namespace RHOnline.Library.Mail
             };
             mensagem.Bcc.Add(email);
             smtp.Send(mensagem);
+
         }
+
+
     }
 }

@@ -75,13 +75,13 @@
         <div class="form-group col-md-6">
             <label for="confirmasenha">Confime a Senha</label>
             <input type="password" name="confirmasenha" class="form-control" id="confirmasenha" value=""
-                   onkeydown="return document.getElementById('conferencia').hidden = true; " required>
+                   onkeydown="return document.getElementById('conferencia').hidden = true;" required>
         </div>
 
         @if (TempData["SenhaNaoValidada"] != null)
         {
-            <div>
-                <font color="red"><b>@TempData["SenhaNaoValidada"]</b></font>
+            <div class="destaque-vermelho">
+                @TempData["SenhaNaoValidada"]
             </div>
         }
 

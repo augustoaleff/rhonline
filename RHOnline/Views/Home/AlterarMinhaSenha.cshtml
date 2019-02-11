@@ -78,15 +78,16 @@
         <!--Senha Anterior-->
         <div class="form-group col-md-6">
             <label for="senhaAnterior">Senha Anterior</label>
-            <input type="password" name="senhaAnterior" class="form-control" id="senhaAnterior" 
+            <input type="password" name="senhaAnterior" class="form-control" id="senhaAnterior"
                    onkeydown="return document.getElementById('conferencia_senhaanterior').hidden = true"
                    value="@senhaAnterior" placeholder="" required>
         </div>
 
         @if (@TempData["SenhaAnteriorNotOK"] != null)
         {
-            <div>
-                <b id="conferencia_senhaanterior" style="color:red">@TempData["SenhaAnteriorNotOK"]  </b>
+
+            <div class="destaque-vermelho" id="conferencia_senhaanterior">
+                @TempData["SenhaAnteriorNotOK"]
             </div>
 
             <br />
@@ -114,9 +115,11 @@
 
         @if (TempData["SenhaNaoValidada"] != null)
         {
-            <div>
-                <font color="red"><b>@TempData["SenhaNaoValidada"]</b></font>
+
+            <div class="destaque-vermelho">
+                @TempData["SenhaNaoValidada"]
             </div>
+
         }
 
         <br />
@@ -135,13 +138,13 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        
+
         var cpf = $('#cpf_login').attr('value');
 
         var mask = mascara(cpf, mcpf);
-        
+
         $('#cpf_login').attr('value', mask);
 
     });
-    
+
 </script>
