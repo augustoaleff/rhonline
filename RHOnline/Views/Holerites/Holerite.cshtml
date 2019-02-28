@@ -1,4 +1,5 @@
-﻿
+﻿@model RHOnline.Models.ViewModels.HoleriteVM
+@using RHOnline.Models
 @{
     Layout = "";
     @using RHOnline.Library.Globalization;
@@ -16,14 +17,14 @@
 
     <div class="cabecalho-topo">
         <div>
-            ELETROLESTE COM E IMP MAT ELETR
+            @Model.Usuario.Loja.RazaoSocial
             <br />
-            AV ARICANDUVA 5200
+            @Model.Usuario.Loja.Endereco, @Model.Usuario.Loja.Numero
             <br />
-            66.573.759/0001-71
+            @Convert.ToUInt64(Model.Usuario.Loja.CNPJ).ToString(@"00\.000\.000\/0000\-00")
         </div>
         <div>
-            SÃO PAULO - SP
+            @Model.Usuario.Loja.Cidade - @Model.Usuario.Loja.UF
         </div>
         <div class="center">
             RECIBO DE PAGAMENTO
@@ -50,9 +51,9 @@
                 </tr>
             </thead>
             <tr>
-                <td>905</td>
-                <td>AUGUSTO ALEFF MARTINS DA SILVA</td>
-                <td>411005</td>
+                <td>@Model.Usuario.Id</td>
+                <td>@Model.Usuario.Nome.ToUpper()</td>
+                <td>@Model.Cbo</td>
                 <td></td>
                 <td></td>
                 <td>0</td>
@@ -62,8 +63,8 @@
             </tr>
             <tr>
                 <td></td>
-                <td>AUXILIAR ADMINISTRATIVO</td>
-                <td>ADMISSÃO: 02/03/2015</td>
+                <td>@Model.Cargo.ToUpper()</td>
+                <td>ADMISSÃO: @Globalization.DataCurtaBR(Model.Usuario.DataAdmissao)</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -84,34 +85,33 @@
                     <th class="descricao">Descontos</th>
                 </tr>
             </thead>
-            <tr>
-                <td class="descricao">1</td>
-                <td>SALÁRIO</td>
-                <td class="descricao">30,00</td>
-                <td class="descricao vencimento">1000,00</td>
-                <td class="descricao desconto"></td>
-            </tr>
-            <tr>
-                <td class="descricao">194</td>
-                <td>HORAS EXTRAS 60%</td>
-                <td class="descricao">5,05</td>
-                <td class="descricao vencimento">50,00</td>
-                <td class="descricao desconto"></td>
-            </tr>
-            <tr>
-                <td class="descricao">11</td>
-                <td>INSS SOBRE SALARIO</td>
-                <td class="descricao">9,00</td>
-                <td class="descricao vencimento"></td>
-                <td class="descricao desconto">500,00</td>
-            </tr>
-            <tr>
-                <td class="descricao">1061</td>
-                <td>DESC COMPRA(S) MERCADORIA(S)</td>
-                <td class="descricao"></td>
-                <td class="descricao vencimento" ></td>
-                <td class="descricao desconto">200,00</td>
-            </tr>
+
+            @foreach (Evento evento in Model.Eventos)
+            {
+                <tr>
+                    <td class="descricao">@evento.Codigo</td>
+                    <td>@evento.Descricao.ToUpper()</td>
+                    <td class="descricao">@string.Format("{0:N}", evento.Referencia)</td>
+                    @if (evento.Vencimento != 0)
+                    {
+                        <td class="descricao vencimento">@string.Format("{0:N}", evento.Vencimento)</td>
+                    }
+                    else
+                    {
+                        <td class="descricao vencimento"></td>
+                    }
+
+                    @if (evento.Desconto != 0)
+                    {
+                        <td class="descricao desconto">@string.Format("{0:N}", evento.Desconto) </td>
+                    }
+                    else
+                    {
+                        <td class="descricao desconto"></td>
+                    }
+
+                </tr>
+            }
 
         </table>
 
@@ -120,21 +120,21 @@
         <div class="rodape-topo">
 
             <div class="mensagem">
-                ATUALIZE OS SEUS DOCUMENTOS JUNTO AO RH, NÃO ESQUEÇA DE TRAZER O COMPROVANDE DE RESIDÊNCIA, RG E FOTO ATUALIZADA!
+                @Model.Mensagem.ToUpper()
             </div>
 
             <table class="rodape-table">
                 <tr>
                     <th>Total Vencimentos --></th>
-                    <td>1000,00</td>
+                    <td>R$ @string.Format("{0:N}", Model.TotalVencimentos)</td>
                 </tr>
                 <tr>
                     <th>Total Descontos --></th>
-                    <td>300,00</td>
+                    <td>R$ @string.Format("{0:N}", Model.TotalDescontos)</td>
                 </tr>
                 <tr>
                     <th>Total Líquido --></th>
-                    <td>700,00</td>
+                    <td>R$ @string.Format("{0:N}", Model.TotalLiquido)</td>
                 </tr>
             </table>
 
@@ -153,12 +153,21 @@
                     </tr>
                 </thead>
                 <tr>
-                    <td>1000,00</td>
-                    <td>930,00</td>
-                    <td>930,00</td>
-                    <td>120,00</td>
-                    <td>960,00</td>
-                    <td>*****</td>
+                    <td>@string.Format("{0:N}", Model.SalarioBase)</td>
+                    <td>@string.Format("{0:N}", Model.SalarioINSS)</td>
+                    <td>@string.Format("{0:N}", Model.BaseCalculoFGTS)</td>
+                    <td>@string.Format("{0:N}", Model.FGTSdoMes)</td>
+                    <td>@string.Format("{0:N}", Model.BaseCalculoIRRF)</td>
+
+                    @if (Model.FaixaIRRF != "" && Model.FaixaIRRF != null)
+                    {
+                        <td>@Model.FaixaIRRF</td>
+                    }
+                    else
+                    {
+                        <td>*****</td>
+                    }
+
                 </tr>
             </table>
 
@@ -166,27 +175,33 @@
     </div>
 
     <div class="validacao">
+        <div>
 
-        <br />
 
-        Holerite emitido digitalmente @Globalization.DataAtualExtensoBR(), poderá ser validado <br /> pelo site htttp://wwww.eletroleste.com.br/RHOnline/Validacao/Validar com o código:  <br /> AAA000BBB125CCC
+            Holerite emitido digitalmente @Globalization.DataAtualExtensoBR(), poderá ser validado <br /> pelo site http://wwww.eletroleste.com.br/RHOnline/Validacao/Validar? com o código ou através dp QRCode:  <br /> @Model.Autenticacao
 
-        <br />
-        <br />
+            @{
+                string source = "https://api.qrserver.com/v1/create-qr-code/?data=http://wwww.eletroleste.com.br/RHOnline/Validacao/Validar?key=" + Model.Autenticacao + "&amp;size=100x100";
+            }
 
+
+        </div>
+
+        <div style="padding: 10px 10px 10px 10px">
+
+            <img id='qrcode'
+                 src="@source"
+                 alt="Validacao"
+                 title="Validação"
+                 width="100"
+                 height="100" />
+
+        </div>
     </div>
 
     <script type="text/javascript">
 
-        var Soma = document.getElementsByClassName("vencimento");
-        var somatoria;
-        
-        $(Soma).each(evento){
 
-            somatoria = somatoria + parseFloat(event);
-            
-        };
-        
     </script>
 
 </body>

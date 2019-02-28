@@ -15,6 +15,8 @@ namespace RHOnline.Library.Mail
             string saudacao, conteudo, rodape;
             DateTime agora = Globalization.Globalization.HoraAtualBR();
 
+            nome = Shared.PegarPrimeiroNome(nome);
+
             if (agora.Hour >= 3 && agora.Hour <= 11) //Entre 3h e meio-dia ==> Bom Dia
             {
                 saudacao = "Bom Dia " + nome + ",<br />";
@@ -28,7 +30,7 @@ namespace RHOnline.Library.Mail
                 saudacao = "Boa Noite " + nome + ",<br />";
             }
             
-            conteudo = "<br />  <a href='http://www.eletroleste.com.br/RHOnline/Home/TrocarSenha?key=" + codigo + "'>Clique Aqui </a> para confirmar o seu e-mail <br />" +
+            conteudo = "<br />  <a href='http://www.eletroleste.com.br/RHOnline/Home/ValidarEmail?key=" + codigo + "'>Clique Aqui </a> para confirmar o seu e-mail <br />" +
                 " <br /><br />Favor desconsiderar caso tenha recebido por erro";
 
             rodape = "<br /><br /><font size='1'>Mensagem Automática, favor não responder. Enviada: " + Globalization.Globalization.DataAtualExtensoBR() + "</font>";
@@ -53,7 +55,6 @@ namespace RHOnline.Library.Mail
             smtp.Send(mensagem);
 
         }
-
 
     }
 }

@@ -91,5 +91,31 @@ namespace RHOnline.Models.Logs
             this.Obs = "ERRO: " + exp.Message;
         }
 
+        public void CadastrarUsuario(int usuario)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 310; //Cadastramento de Usuário RH com Sucesso
+        }
+
+        public void CadastrarUsuario_Erro(int usuario, Exception exp)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 309; //Cadastramento de Usuário RH com Erro
+            this.Obs = "ERRO: " + exp.Message;
+        }
+
+        public void EnviarEmailValidacao(int usuario)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 14; //Confirmação de Email por Link com Sucesso
+        }
+
+        public void EnviarEmailValidacao_Erro(int usuario, Exception exp)
+        {
+            this.Usuario = usuario;
+            this.Tipo = 13; //Confirmação de Email por Link com Erro
+            this.Obs = "ERRO: " + exp.Message;
+        }
+
     }
 }

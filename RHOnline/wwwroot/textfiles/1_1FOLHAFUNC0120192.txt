@@ -1,0 +1,42 @@
+11083  414105 ESTOQUISTA                                         
+1     Salario                                                                24,00            1.137,60 
+12    Adiantamento Anterior                                                          455,04            
+194   Horas Extras 60%                                                       1,26             13,03    
+5     D.S.R. Sobre Horas Extras                                                               2,61     
+11    INSS Sobre Salario                                                     8,00    92,26             
+19    Arredondamento Anterior                                                        0,96              
+36    Vale Transporte                                                                68,26             
+16    Arredondamento Atual                                                                    0,28     
+Janeiro/2019
+         
+11082  411005 AUXILIAR ADMINISTRATIVO                            
+1     Salario                                                                29,00            1.374,60 
+12    Adiantamento Anterior                                                          549,84            
+38    Atrasos/Saidas (Horas)                                                 0,15    0,97              
+194   Horas Extras 60%                                                       1,36             14,06    
+5     D.S.R. Sobre Horas Extras                                                               2,93     
+11    INSS Sobre Salario                                                     8,00    111,25            
+19    Arredondamento Anterior                                                        0,16              
+36    Vale Transporte                                                                82,48             
+16    Arredondamento Atual                                                                    0,11     
+Janeiro/2019         
+11086  421125 OPERADORA DE CAIXA                                 
+1     Salario                                                                17,00            805,80   
+1097  Quebra Caixa                                                                            42,50    
+194   Horas Extras 60%                                                       0,12             1,31     
+5     D.S.R. Sobre Horas Extras                                                               0,28     
+11    INSS Sobre Salario                                                     8,00    67,99             
+36    Vale Transporte                                                                48,35             
+16    Arredondamento Atual                                                                    0,45     
+Janeiro/2019         
+11085  414105 AUX SERV GERAIS                                    
+1     Salario                                                                22,00            1.042,80 
+12    Adiantamento Anterior                                                          417,12            
+38    Atrasos/Saidas (Horas)                                                 0,06    0,39              
+194   Horas Extras 60%                                                       1,31             13,55    
+5     D.S.R. Sobre Horas Extras                                                               3,01     
+11    INSS Sobre Salario                                                     8,00    84,72             
+19    Arredondamento Anterior                                                        0,88              
+36    Vale Transporte                                                                62,57             
+16    Arredondamento Atual                                                                    0,32     
+Janeiro/2019         

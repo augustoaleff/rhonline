@@ -32,7 +32,6 @@ namespace RHOnline.Library
 
         public static string RetirarCaracteres(string input)
         {
-
             string output;
 
             input = input.Replace(".","");

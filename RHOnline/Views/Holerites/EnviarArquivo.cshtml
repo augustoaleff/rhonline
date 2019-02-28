@@ -1,0 +1,137 @@
+﻿@model List<RHOnline.Models.Arquivo>
+@using RHOnline.Library.Globalization
+@{
+    ViewData["Title"] = "EnviarArquivo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+
+@if (TempData["EnviarArquivoErro"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["EnviarArquivoErro"]
+    </div>
+}
+
+@if (TempData["EnviarArquivoOK"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["EnviarArquivoOK"]
+    </div>
+}
+
+<h2>Enviar Arquivo</h2>
+
+
+
+<form action="/RHOnline/Holerites/EnviarArquivo" enctype="multipart/form-data" method="post">
+
+    <br />
+
+    <div class="custom-file">
+
+        <div class=" col-md-7">
+            <label class="custom-file-label" for="funcionarios">Funcionários: </label>
+            <input type="file" name="funcionarios" id="funcionarios" class="custom-file-input" multiple />
+        </div>
+
+    </div>
+
+    <br />
+
+    <div class="custom-file">
+        <div class=" col-md-7">
+            <label class="custom-file-label" for="holerites">Holerites: </label>
+            <input type="file" name="holerites" id="holerites" class="custom-file-input" multiple />
+        </div>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <div class=" col-md-7">
+            <label class="custom-file-label" for="eventos">Eventos: </label>
+            <input type="file" name="eventos" id="eventos" class="custom-file-input" multiple />
+        </div>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+
+        <div id="spinner" style="display:none">
+            <button type="submit" class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Enviando...
+            </button>
+        </div>
+
+        <button type="submit" id="btnEnviar" onclick="return mostrarSpinner();" class="btn btn-primary">Enviar</button>
+    </div>
+
+</form>
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Enviado em</th>
+            <th scope="col">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var arquivo in Model)
+        {
+        <tr>
+            <th scope="row">@arquivo.Id</th>
+            <td>@arquivo.Nome</td>
+            <td>@Globalization.DataHoraCurtaBR(arquivo.DataProcessamento)</td>
+
+            @if (arquivo.Processado == 0)
+            {
+            <td>
+                <a href="/RHOnline/Holerites/ExcluirArquivo?key=@arquivo.Id" alt="download" type="button"
+                   class="btn btn-danger btn-sm" onclick="return confirmarExclusao();">
+                    Excluir
+                </a>
+                <a href="/RHOnline/Holerites/ProcessarArquivo?key=@arquivo.Id" alt="download" type="button"
+                   class="btn btn-success btn-sm">
+                    Processar
+                </a>
+            </td>
+            }
+            else
+            {
+                <td>
+                    <a href="/RHOnline/Holerites/ExcluirArquivo?key=@arquivo.Id" alt="download" type="button"
+                       class="btn btn-danger btn-sm">
+                        Excluir
+                    </a>
+                </td>
+            }
+
+        </tr>
+
+        }
+
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+
+    function mostrarSpinner() {
+
+        $('#spinner').css('display', 'initial');
+        $('#btnEnviar').hide();
+
+    }
+
+    function confirmarExclusao() {
+
+       return confirm("Realmente deseja excluir o arquivo?");
+    }
+
+</script>

@@ -290,7 +290,7 @@ Footers And Headers:
   As an example specifying --header-right "Page [page] of [toPage]", will result
   in the text "Page x of y" where x is the number of the current page and y is
   the number of the last page, to appear in the upper left corner in the
-  document.
+  document.\
 
   Headers and footers can also be supplied with HTML documents. As an example
   one could specify --header-html header.html, and use the following content in

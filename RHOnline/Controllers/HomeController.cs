@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using RHOnline.Library.Filters;
 using RHOnline.Models;
 using RHOnline.Library.Globalization;
+using RHOnline.Library.Mail;
 using System.Xml.Linq;
 using System.IO;
 using RHOnline.Models.Logs;
@@ -27,6 +28,7 @@ namespace RHOnline.Controllers
 
         public IActionResult Index()
         {
+            int user = HttpContext.Session.GetInt32("ID") ?? 0;
 
             //Verifica se já há alguma sessão ativa
             if(HttpContext.Session.GetInt32("ID") != null)
@@ -37,15 +39,32 @@ namespace RHOnline.Controllers
             {
                 return View();
             }
-            
         }
         
         [Login]
         public IActionResult Inicio()
         {
+            int user = HttpContext.Session.GetInt32("ID") ?? 0;
+
+            Usuario usuario = _db.Int_RH_Usuarios.Find(user);
+
+            if(usuario.Verificado != 1)
+            {
+                TempData["VerificarEmail"] = "O seu e-mail ainda não foi verificado";
+            }
+
+            List<Imagem> banner = _db.Int_DP_Banner.OrderBy(a => a.Ordem).ToList();
+
+            ViewBag.Banner = banner;
+
             return View();
         }
-
+        
+        public IActionResult EnviarMensagemSuporte()
+        {
+            return RedirectToAction("Inicio");
+        }
+        
         [HttpPost]
         public ActionResult Login(string cpf, string senha)
         {
@@ -56,7 +75,7 @@ namespace RHOnline.Controllers
             if (user != null)
             {
                 ViewBag.User = user;
-
+               
                 if (user.Ativo == 1)
                 {
                     senha = senha.Replace(",", "").Replace(".", "").Replace("'", "").Replace(".", "").Trim();
@@ -71,17 +90,13 @@ namespace RHOnline.Controllers
                         try
                         {
                             int loja = _db.Int_RH_Usuarios.Where(a => a.Id == user.Id).Select(s => s.Loja.Id).FirstOrDefault();
-                            user.Loja = _db.Int_DP_Lojas.Find(loja);
-
-                            int setor = _db.Int_RH_Usuarios.Where(a => a.Id == user.Id).Select(s => s.Setor.Id).FirstOrDefault();
-                            user.Setor = _db.Int_DP_Setores.Find(setor);
-
+                            user.Loja = _db.Int_RH_Lojas.Find(loja);
+                            
                             HttpContext.Session.SetInt32("ID", user.Id);
+                            HttpContext.Session.SetInt32("Nivel", user.Nivel); //1: Administrador, 2: Usuario Comum, 3: Suporte 
+                            HttpContext.Session.SetInt32("Loja", user.Loja.Id);
                             HttpContext.Session.SetString("Nome", user.Nome);
                             HttpContext.Session.SetString("CPF", user.CPF);
-                            HttpContext.Session.SetInt32("Nivel", user.Nivel);
-                            HttpContext.Session.SetInt32("Loja", user.Loja.Id);
-                            HttpContext.Session.SetInt32("Setor", user.Setor.Id);
                             HttpContext.Session.SetString("UltimoAcesso", Globalization.DataHoraExtensoBR(user.UltimoAcesso));
 
                             user.UltimoAcesso = Globalization.HoraAtualBR();
@@ -108,7 +123,6 @@ namespace RHOnline.Controllers
                             _db.Int_RH_Logs.Add(log);
                             _db.SaveChanges();
                         }
-
                     }
                     else
                     {
@@ -133,22 +147,21 @@ namespace RHOnline.Controllers
         {
             return View();
         }
-
+        
         [HttpPost]
         public ActionResult Cadastrar([FromForm]Usuario user, string confirmasenha)
         {
             int loja = _db.Int_RH_Usuarios.Where(a => a.Id == user.Id).Select(s => s.Loja.Id).FirstOrDefault();
-            user.Loja = _db.Int_DP_Lojas.Find(loja);
-
-            int setor = _db.Int_RH_Usuarios.Where(a => a.Id == user.Id).Select(s => s.Setor.Id).FirstOrDefault();
-            user.Setor = _db.Int_DP_Setores.Find(setor);
-
-            ViewBag.User = user;
+            user.Loja = _db.Int_RH_Lojas.Find(loja);
+            
+            ViewBag.User = user; 
 
             if (ValidarSenha(user.Senha))
             {
                 if (user.Senha.Equals(confirmasenha))
                 {
+                    Log log = new Log();
+
                     try
                     {
                         user.Senha = user.Senha.Replace(",", "").Replace(".", "").Replace("'", "").Trim();
@@ -158,22 +171,33 @@ namespace RHOnline.Controllers
                         user_cad.DataCadastro = Globalization.HoraAtualBR();
                         user_cad.Email = user.Email;
                         user_cad.Celular = Shared.RetirarCaracteres(user.Celular);
-                        user_cad.Telefone = Shared.RetirarCaracteres(user.Telefone);
+                        user_cad.Telefone = Shared.RetirarCaracteres(user.Telefone);                                        
                         
                         user_cad.Nivel = 2; //Usuário Comum
                         user_cad.Senha = Criptografia.GetMd5Hash(user.Senha);
                         user_cad.Cadastrado = 1;
                         user_cad.Ativo = 1;
-
+                        user_cad.Verificado = 0; //Email não foi verificado
+                        
                         _db.SaveChanges();
+
+                        EnviarValidacaoEmail(user_cad.Id);
 
                         TempData["MensagemSucessoIndex"] = "Cadastro efetuado com Sucesso!";
 
+                        log.CadastrarUsuario(user.Id);
+                        
                         return RedirectToAction("Index", "Home");
                     }
-                    catch (Exception)
+                    catch (Exception exp)
                     {
                         TempData["CadastroNotOK"] = "Ocorreu um erro ao tentar cadastrar, por favor, tente novamente";
+                        log.CadastrarUsuario_Erro(user.Id, exp);
+                    }
+                    finally
+                    {
+                        _db.Int_RH_Logs.Add(log);
+                        _db.SaveChanges();
                     }
                 }
                 else
@@ -184,7 +208,90 @@ namespace RHOnline.Controllers
 
             return View();
         }
+        
+        public void EnviarValidacaoEmail(int id)
+        {
+            Usuario user = _db.Int_RH_Usuarios.Find(id);
 
+            int cod_loja = _db.Int_RH_Usuarios.Where(a => a.Id == id).Select(s => s.Loja.Id).FirstOrDefault();
+           
+            
+            user.Loja = _db.Int_RH_Lojas.Find(cod_loja);
+
+            string codigo_verificacao = user.Id.ToString() + "_"
+                + (cod_loja + user.Nivel + user.Id + long.Parse(user.CPF)).ToString();
+            
+            ValidacaoEmail.EnviarEmailValidacao(user.Email, codigo_verificacao, user.Nome);
+        
+        }
+
+        public IActionResult EnviarLinkValidacao()
+        {
+            int id = HttpContext.Session.GetInt32("ID") ?? 0;
+            
+            Log log = new Log();
+
+            try
+            {
+                EnviarValidacaoEmail(id);
+                log.EnviarEmailValidacao(id);
+            }
+            catch (Exception exp)
+            {
+                log.EnviarEmailValidacao_Erro(id, exp);
+            }
+            finally
+            {
+                _db.Int_RH_Logs.Add(log);
+                _db.SaveChanges();
+            }
+            
+            if (HttpContext.Session.GetInt32("ID") != null)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Inicio");
+            }
+
+                
+
+            
+
+        }
+        
+        public ActionResult ValidarEmail(string key)
+        {
+            int id = HttpContext.Session.GetInt32("ID") ?? 0;
+            
+            Usuario user = _db.Int_RH_Usuarios.Find(id);
+
+            int cod_loja = _db.Int_RH_Usuarios.Where(a => a.Id == id).Select(s => s.Loja.Id).FirstOrDefault();
+            
+
+            
+            user.Loja = _db.Int_RH_Lojas.Find(cod_loja);
+            
+            string codigo_verificacao = user.Id.ToString() + "_" 
+                + (cod_loja + user.Nivel + user.Id + long.Parse(user.CPF)).ToString();
+
+            if (key == codigo_verificacao)
+            {
+                user.Verificado = 1;
+                _db.SaveChanges();  
+                TempData["MensagemSucessoInicio"] = "Email Verificado com Sucesso!";
+            }
+            else
+            {
+                TempData["MensagemErroInicio"] = "Link de Validação Inválido!";
+            }
+            
+            return RedirectToAction("Inicio");
+
+        }
+        
+        //Valida a senha para enviar ao banco
         public bool ValidarSenha(string senha)
         {
             if (senha.Length >= 8)
@@ -199,7 +306,7 @@ namespace RHOnline.Controllers
                                 senha.Contains("3") || senha.Contains("4") || senha.Contains("5") ||
                                 senha.Contains("6") || senha.Contains("7") || senha.Contains("8") || senha.Contains("9"))
                             {
-                                return true;
+                                return true; //Senha Validada
                             }
                             else
                             {
@@ -231,15 +338,13 @@ namespace RHOnline.Controllers
                 return false;
             }
         }
-
-
+        
         //Trocar Senha por envio e link no email
         public ActionResult TrocarSenha()
         {
             return View();
         }
-
-
+        
         //Trocar Senha por envio e link no email
         [HttpGet]
         public ActionResult TrocarSenha(long? key)
@@ -251,13 +356,12 @@ namespace RHOnline.Controllers
 
             if (vKey != null)
             {
-
                 if (vKey.DataExpiracao >= agora)
                 {
                     if (vKey.Utilizado == 0)
                     {
                         Usuario usuario = _db.Int_RH_Usuarios.Find(vKey.Usuario);
-
+                        
                         vKey.Utilizado = 1;
                         _db.SaveChanges();
 
@@ -266,10 +370,8 @@ namespace RHOnline.Controllers
                         ViewBag.Email = usuario.Email;
                         ViewBag.IdSenha = usuario.Id;
                         
-
-
                         ViewBag.TrocarSenha = vKey;
-
+                        
                         return View();
                     }
                     else
@@ -289,26 +391,23 @@ namespace RHOnline.Controllers
             {
                 TempData["MensagemErroIndex"] = "Link Inválido";
                 return RedirectToAction("Index");
-
             }
         }
         
         [Login]
         public ActionResult AlterarMinhaSenha()
         {
-
             int id_notnull = HttpContext.Session.GetInt32("ID") ?? 0;
-
-            Usuario usuario = _db.Int_RH_Usuarios.Find(id_notnull);
             
+            Usuario usuario = _db.Int_RH_Usuarios.Find(id_notnull);
+        
             return View();
         }
-
+        
         [Login]
         [HttpPost]
         public ActionResult AlterarMinhaSenha([FromForm]int? id, string senha, string confirmasenha, string senhaAnterior)
         {
-
             ViewBag.Senha = senha;
             ViewBag.SenhaAnterior = senhaAnterior;
             
@@ -493,7 +592,7 @@ namespace RHOnline.Controllers
                         _db.Int_RH_Logs.Add(log);
                         _db.SaveChanges();
                     }
-
+                
                 }
                 else
                 {
@@ -522,7 +621,7 @@ namespace RHOnline.Controllers
         
         [Login]
         [HttpPost]
-        public ActionResult AtualizarCadastro(int? id, string email, string telefone, string celular)
+        public ActionResult AtualizarCadastro(int? id, string email, string telefone, string celular, bool alertas)
         {
             int id_notnull = id ?? 0;
 
@@ -536,11 +635,23 @@ namespace RHOnline.Controllers
 
             email = email.ToLower();
 
+            byte alerta;
+
+            if (alertas)
+            {
+                alerta = 1;
+            }
+            else
+            {
+                alerta = 0;
+            }
+
             try
             {
                 usuario.Telefone = telefone;
                 usuario.Celular = celular;
                 usuario.Email = email;
+                usuario.Alertas = alerta;
 
                 _db.SaveChanges();
 
@@ -569,11 +680,9 @@ namespace RHOnline.Controllers
             Usuario user = _db.Int_RH_Usuarios.Where(a => a.CPF.Equals(cpf)).FirstOrDefault();
 
             int loja = _db.Int_RH_Usuarios.Where(a => a.Id == user.Id).Select(s => s.Loja.Id).FirstOrDefault();
-            user.Loja = _db.Int_DP_Lojas.Find(loja);
+            user.Loja = _db.Int_RH_Lojas.Find(loja);
 
-            int setor = _db.Int_RH_Usuarios.Where(a => a.Id == user.Id).Select(s => s.Setor.Id).FirstOrDefault();
-            user.Setor = _db.Int_DP_Setores.Find(setor);
-
+            
             if (user != null)
             {
                 if (user.Cadastrado == 0)
@@ -611,7 +720,7 @@ namespace RHOnline.Controllers
 
             try
             {
-                HttpContext.Session.Clear();
+                HttpContext.Session.Clear(); //Limpa a sessão atual
                 log.LogOut(user_notnull);
 
             }
@@ -624,8 +733,7 @@ namespace RHOnline.Controllers
                 _db.Int_RH_Logs.Add(log);
                 _db.SaveChanges();
             }
-
-
+            
             return RedirectToAction("Index");
         }
     }

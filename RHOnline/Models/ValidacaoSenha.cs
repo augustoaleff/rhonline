@@ -12,6 +12,5 @@ namespace RHOnline.Models
         public DateTime DataExpiracao { get; set; }
         public byte Utilizado { get; set; }
         public int Usuario { get; set; }
-
     }
 }

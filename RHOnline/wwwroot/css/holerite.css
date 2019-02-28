@@ -55,8 +55,7 @@ table.lancamentos{
     padding-right:5px;
 }
 
-
-table.rodape-table{
+.rodape-table{
     width:30%;
 }
 
@@ -91,7 +90,8 @@ table.rodape-table{
     border-top: none;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+    align-items: center;
     text-align: center;
     font-weight: 900;
 }

@@ -72,6 +72,21 @@
 
     </div>
 
+    <div class="form-group form-check">
+        @if (ViewBag.User.Alertas == 1)
+        {
+            <input type="checkbox" class="form-check-input" id="alertas" name="alertas" checked value="true">
+            
+        }
+        else
+        {
+            <input type="checkbox" class="form-check-input" id="alertas" name="alertas" value="true">
+        }
+
+        <label class="form-check-label" for="alertas">Receber alertas sobre holerites disponíveis?</label>
+
+    </div>
+
     <div class="form-group">
 
         <div id="spinnerSenha" style="display:none">
@@ -99,5 +114,5 @@
 
         }
     }
-    
+
 </script>
