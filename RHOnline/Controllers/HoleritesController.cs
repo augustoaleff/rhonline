@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RHOnline.Database;
+using RHOnline.Library;
 using RHOnline.Library.Filters;
 using RHOnline.Library.Globalization;
 using RHOnline.Models;
@@ -90,15 +91,56 @@ namespace RHOnline.Controllers
 
             Evento evento2 = new Evento()
             {
-                Codigo = 1,
+                Codigo = 34,
                 Descricao = "TESTE",
                 Referencia = 50.0,
                 Vencimento = 1000.0,
                 Desconto = 0.0
             };
-            
+
+            Evento evento3 = new Evento()
+            {
+                Codigo = 28,
+                Descricao = "TESTE2",
+                Referencia = 50.0,
+                Vencimento = 0.0,
+                Desconto = 250.36
+            };
+
+            Evento evento4 = new Evento()
+            {
+                Codigo = 654,
+                Descricao = "TESTE3 TESTE 3 TESTE 3 TESTE 3 TESTE 3",
+                Referencia = 6.38,
+                Vencimento = 0.0,
+                Desconto = 542.65
+            };
+
+            Evento evento5 = new Evento()
+            {
+                Codigo = 8,
+                Descricao = "TESTE 4",
+                Referencia = 985.36,
+                Vencimento = 225412.00,
+                Desconto = 52145.25
+            };
+
+            Evento evento6 = new Evento()
+            {
+                Codigo = 43,
+                Descricao = "TESTE 5",
+                Referencia = 50.0,
+                Vencimento = 0,
+                Desconto = 520.00
+            };
+
+
             holerite.Eventos.Add(evento1);
             holerite.Eventos.Add(evento2);
+            holerite.Eventos.Add(evento3);
+            holerite.Eventos.Add(evento4);
+            holerite.Eventos.Add(evento5);
+            holerite.Eventos.Add(evento6);
 
             holerite.Cbo = 1234;
             holerite.BaseCalculoFGTS = 1;
@@ -109,12 +151,12 @@ namespace RHOnline.Controllers
             holerite.TotalLiquido = 800;
             holerite.SalarioINSS = 100;
             holerite.SalarioBase = 1000;
-            holerite.Mensagem = "teste";
+            holerite.Mensagem = "mensgaem teste TESTE TESTE MESNAGEM TESTE TESTE TESTE MENSGAME TESTE TESTE TESTE MENSAGEM TESTE mensgaem teste TESTE TESTE MESNAGEM TESTE TESTE TESTE MENSGAME TESTE TESTE TESTE MENSAGEM TESTE";
             holerite.Cargo = "programador";
 
-            holerite.CompetenciaAno = 9999;
-            holerite.CompetenciaMes = 99;
-            holerite.Tipo = "99";
+            holerite.CompetenciaAno = 2019;
+            holerite.CompetenciaMes = 03;
+            holerite.Tipo = "Mensal";
 
             holerite.GerarId();
 
@@ -396,6 +438,11 @@ namespace RHOnline.Controllers
 
                                 //holerite = _db.Int_RH_Holerites.Where(a => a.Usuario.Id == id_user && a.CompetenciaMes == mes &&
                                 //a.CompetenciaAno == ano && a.Tipo == tipo).FirstOrDefault();
+
+                                
+
+
+
                             }
                             else
                             {

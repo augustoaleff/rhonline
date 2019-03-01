@@ -30,8 +30,6 @@ namespace RHOnline.Models
 
         public void GerarId()
         {
-            //Gera 
-
             DateTime agora = Globalization.HoraAtualBR();
 
             int data = agora.Day + agora.Month + agora.Year + agora.Hour + agora.Minute + agora.Second + agora.Millisecond;
@@ -53,6 +51,7 @@ namespace RHOnline.Models
             //Converte o Id para Hexadecimal e aloca na Autenticação
             this.Autenticacao = this.Id.ToString("X");
 
+            
 
         }
 

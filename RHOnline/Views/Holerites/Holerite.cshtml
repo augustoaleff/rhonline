@@ -3,7 +3,80 @@
 @{
     Layout = "";
     @using RHOnline.Library.Globalization;
-}
+    string periodo;
+
+    periodo = "";
+
+    @switch (Model.CompetenciaMes)
+    {
+        case 1:
+
+            periodo = "Janeiro/" + Model.CompetenciaAno;
+
+            break;
+        case 2:
+
+            periodo = "Fevereiro/" + Model.CompetenciaAno;
+
+            break;
+        case 3:
+
+            periodo = "Março/" + Model.CompetenciaAno;
+
+            break;
+        case 4:
+
+            periodo = "Abril/" + Model.CompetenciaAno;
+
+            break;
+        case 5:
+
+            periodo = "Maio/" + Model.CompetenciaAno;
+
+            break;
+        case 6:
+
+            periodo = "Junho/" + Model.CompetenciaAno;
+
+            break;
+        case 7:
+
+            periodo = "Julho/" + Model.CompetenciaAno;
+
+            break;
+        case 8:
+
+            periodo = "Agosto/" + Model.CompetenciaAno;
+
+            break;
+        case 9:
+
+            periodo = "Setembro/" + Model.CompetenciaAno;
+
+            break;
+        case 10:
+
+            periodo = "Outubro/" + Model.CompetenciaAno;
+
+            break;
+        case 11:
+
+            periodo = "Novembro/" + Model.CompetenciaAno;
+
+            break;
+        case 12:
+
+            periodo = "Dezembro/" + Model.CompetenciaAno;
+
+            break;
+        default:
+
+            periodo = "";
+
+            break;
+
+    }
+    }
 
 <!DOCTYPE html>
 
@@ -15,25 +88,37 @@
 </head>
 <body>
 
-    <div class="cabecalho-topo">
-        <div>
+    <div class="cabecalho-topo flexrow">
+
+        <div >
             @Model.Usuario.Loja.RazaoSocial
             <br />
             @Model.Usuario.Loja.Endereco, @Model.Usuario.Loja.Numero
             <br />
             @Convert.ToUInt64(Model.Usuario.Loja.CNPJ).ToString(@"00\.000\.000\/0000\-00")
+
+
         </div>
-        <div>
+        
+        <div >
+            <br />
             @Model.Usuario.Loja.Cidade - @Model.Usuario.Loja.UF
+
+
         </div>
-        <div class="center">
+        
+        <div class="texto-direita" >
             RECIBO DE PAGAMENTO
             <br />
-            MENSAL
+            @Model.Tipo.ToUpper()
             <br />
-            Janeiro/2019
+
+            @periodo
+
         </div>
+
     </div>
+
 
     <div class="cabecalho-base">
         <table>
@@ -117,27 +202,30 @@
 
     </div>
     <div class="rodape">
-        <div class="rodape-topo">
+        <div class="rodape-topo flexrow">
 
             <div class="mensagem">
                 @Model.Mensagem.ToUpper()
             </div>
 
-            <table class="rodape-table">
-                <tr>
-                    <th>Total Vencimentos --></th>
-                    <td>R$ @string.Format("{0:N}", Model.TotalVencimentos)</td>
-                </tr>
-                <tr>
-                    <th>Total Descontos --></th>
-                    <td>R$ @string.Format("{0:N}", Model.TotalDescontos)</td>
-                </tr>
-                <tr>
-                    <th>Total Líquido --></th>
-                    <td>R$ @string.Format("{0:N}", Model.TotalLiquido)</td>
-                </tr>
-            </table>
+            <div>
 
+                <table class="rodape-table">
+                    <tr>
+                        <th>Total Vencimentos --></th>
+                        <td>R$ @string.Format("{0:N}", Model.TotalVencimentos)</td>
+                    </tr>
+                    <tr>
+                        <th>Total Descontos --></th>
+                        <td>R$ @string.Format("{0:N}", Model.TotalDescontos)</td>
+                    </tr>
+                    <tr>
+                        <th>Total Líquido --></th>
+                        <td>R$ @string.Format("{0:N}", Model.TotalLiquido)</td>
+                    </tr>
+                </table>
+
+            </div>
         </div>
 
         <div class="rodape-base">
@@ -174,20 +262,21 @@
         </div>
     </div>
 
-    <div class="validacao">
+    <div class="validacao flexrow" >
+
         <div>
-
-
-            Holerite emitido digitalmente @Globalization.DataAtualExtensoBR(), poderá ser validado <br /> pelo site http://wwww.eletroleste.com.br/RHOnline/Validacao/Validar? com o código ou através dp QRCode:  <br /> @Model.Autenticacao
+           
+            <br />
+            
+            Holerite emitido digitalmente @Globalization.DataAtualExtensoBR(), poderá ser validado <br /> pelo site http://wwww.eletroleste.com.br/RHOnline/Validacao/Validar? com o código ou através do QRCode:  <br /> @Model.Autenticacao
 
             @{
                 string source = "https://api.qrserver.com/v1/create-qr-code/?data=http://wwww.eletroleste.com.br/RHOnline/Validacao/Validar?key=" + Model.Autenticacao + "&amp;size=100x100";
             }
 
-
         </div>
 
-        <div style="padding: 10px 10px 10px 10px">
+        <div style="padding: 10px 70px 10px 10px">
 
             <img id='qrcode'
                  src="@source"
